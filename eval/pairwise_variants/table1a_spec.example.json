@@ -1,0 +1,195 @@
+{
+ "rows": [
+  {
+   "domain": "medicine",
+   "x": "base",
+   "y": "A",
+   "label": "Untrained vs Rubric-RL",
+   "questions": [
+    "questions/healthbench_consensus.parquet"
+   ],
+   "data_source": "healthbench_consensus",
+   "ids": "ids/medicine_600.json",
+   "ids_sets": null,
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/medicine/base.jsonl"
+     ]
+    },
+    "A": {
+     "42": [
+      "responses/medicine/rubric_rl_s42.jsonl"
+     ],
+     "43": [
+      "responses/medicine/rubric_rl_s43.jsonl"
+     ],
+     "44": [
+      "responses/medicine/rubric_rl_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "medicine",
+   "x": "base",
+   "y": "B",
+   "label": "Untrained vs ProRubric",
+   "questions": [
+    "questions/healthbench_consensus.parquet"
+   ],
+   "data_source": "healthbench_consensus",
+   "ids": "ids/medicine_600.json",
+   "ids_sets": null,
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/medicine/base.jsonl"
+     ]
+    },
+    "B": {
+     "42": [
+      "responses/medicine/prorubric_s42.jsonl"
+     ],
+     "43": [
+      "responses/medicine/prorubric_s43.jsonl"
+     ],
+     "44": [
+      "responses/medicine/prorubric_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "science",
+   "x": "base",
+   "y": "A",
+   "label": "Untrained vs Rubric-RL",
+   "questions": [
+    "questions/researchqa_valid.parquet"
+   ],
+   "data_source": "researchqa_valid",
+   "ids": "../appropriateness_probe/sample.json",
+   "ids_sets": "researchqa",
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/science/base.jsonl"
+     ]
+    },
+    "A": {
+     "42": [
+      "responses/science/rubric_rl_s42.jsonl"
+     ],
+     "43": [
+      "responses/science/rubric_rl_s43.jsonl"
+     ],
+     "44": [
+      "responses/science/rubric_rl_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "science",
+   "x": "base",
+   "y": "B",
+   "label": "Untrained vs ProRubric",
+   "questions": [
+    "questions/researchqa_valid.parquet"
+   ],
+   "data_source": "researchqa_valid",
+   "ids": "../appropriateness_probe/sample.json",
+   "ids_sets": "researchqa",
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/science/base.jsonl"
+     ]
+    },
+    "B": {
+     "42": [
+      "responses/science/prorubric_s42.jsonl"
+     ],
+     "43": [
+      "responses/science/prorubric_s43.jsonl"
+     ],
+     "44": [
+      "responses/science/prorubric_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "dialogue",
+   "x": "base",
+   "y": "A",
+   "label": "Untrained vs Rubric-RL",
+   "questions": [
+    "questions/arena_hard_v2.parquet"
+   ],
+   "data_source": null,
+   "ids": "../appropriateness_probe/sample.json",
+   "ids_sets": "arena",
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/dialogue/base.jsonl"
+     ]
+    },
+    "A": {
+     "42": [
+      "responses/dialogue/rubric_rl_s42.jsonl"
+     ],
+     "43": [
+      "responses/dialogue/rubric_rl_s43.jsonl"
+     ],
+     "44": [
+      "responses/dialogue/rubric_rl_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "writing",
+   "x": "base",
+   "y": "A",
+   "label": "Untrained vs Rubric-RL",
+   "questions": [
+    "questions/creative_writing_v3.parquet",
+    "questions/writingbench.parquet"
+   ],
+   "data_source": null,
+   "ids": "../appropriateness_probe/sample.json",
+   "ids_sets": "creative,writingbench",
+   "first_n": 100,
+   "responses": {
+    "base": {
+     "all": [
+      "responses/writing/base_creative.jsonl",
+      "responses/writing/base_writingbench.jsonl"
+     ]
+    },
+    "A": {
+     "42": [
+      "responses/writing/rubric_rl_s42_creative.jsonl",
+      "responses/writing/rubric_rl_s42_writingbench.jsonl"
+     ],
+     "43": [
+      "responses/writing/rubric_rl_s43_creative.jsonl",
+      "responses/writing/rubric_rl_s43_writingbench.jsonl"
+     ],
+     "44": [
+      "responses/writing/rubric_rl_s44_creative.jsonl",
+      "responses/writing/rubric_rl_s44_writingbench.jsonl"
+     ]
+    }
+   }
+  }
+ ]
+}

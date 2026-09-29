@@ -1,0 +1,2599 @@
+{
+ "_comment": "Arm spec for analysis/tables. All paths are placeholders, relative to this file. Arm names are the paper's; see README.md for the schema.",
+ "ablations": {
+  "_comment": "Medical 4B ablations (ablations.py). role: table = cuts the common item sets; base = the untrained row (also cuts); appendix = scored on the common sets, never cuts; side = single-seed control, also paired with side_reference.",
+  "questions": {
+   "consensus": "questions/healthbench_consensus.parquet",
+   "hbfull": "questions/healthbench_full.parquet"
+  },
+  "hbfull_prompt_set": {
+   "grades": "grades/hbfull_pro_seed42_arms.jsonl"
+  },
+  "side_reference": [
+   "Rubric-RL",
+   "ProRubric",
+   "Base"
+  ],
+  "arms": [
+   {
+    "name": "Base",
+    "role": "base",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/base_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "base_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "base_s42"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "raw-AND",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/raw_and_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "raw_and_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "raw_and_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/raw_and_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "raw_and_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "raw_and_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/raw_and_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "raw_and_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "raw_and_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Graded",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/graded_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "graded_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "graded_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/graded_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "graded_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "graded_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/graded_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "graded_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "graded_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL + appr. criterion",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_appr_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_appr_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_appr_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_appr_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_appr_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_appr_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_appr_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_appr_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_appr_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric + appr. criterion",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_appr_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_appr_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_appr_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_appr_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_appr_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_appr_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_appr_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_appr_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_appr_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric w/o failure clauses",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_nofail_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_nofail_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_nofail_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_nofail_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_nofail_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_nofail_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_nofail_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_nofail_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_nofail_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "K=1",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/k1_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "k1_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "k1_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/k1_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "k1_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "k1_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/k1_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "k1_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "k1_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Length-matched",
+    "role": "table",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/lenmatch_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "lenmatch_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "lenmatch_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/lenmatch_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "lenmatch_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "lenmatch_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/lenmatch_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "lenmatch_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "lenmatch_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "RuscaRL",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/ruscarl_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "ruscarl_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "ruscarl_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/ruscarl_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "ruscarl_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "ruscarl_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/ruscarl_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "ruscarl_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "ruscarl_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "OPSD",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/opsd_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "opsd_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "opsd_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/opsd_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "opsd_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "opsd_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/opsd_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "opsd_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "opsd_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Weighted",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/weighted_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "weighted_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "weighted_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/weighted_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "weighted_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "weighted_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/weighted_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "weighted_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "weighted_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL, beta=0.005",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_kl005_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl005_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl005_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_kl005_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl005_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl005_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_kl005_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl005_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl005_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL, beta=0.01",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_kl01_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl01_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl01_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_kl01_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl01_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl01_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_kl01_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl01_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl01_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL, beta=0.04",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_kl04_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl04_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl04_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_kl04_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl04_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl04_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_kl04_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_kl04_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_kl04_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric, beta=0.005",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_kl005_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl005_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl005_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_kl005_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl005_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl005_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_kl005_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl005_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl005_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric, beta=0.01",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_kl01_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl01_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl01_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_kl01_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl01_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl01_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_kl01_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl01_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl01_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric, beta=0.04",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_kl04_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl04_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl04_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_kl04_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl04_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl04_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_kl04_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_kl04_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_kl04_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric, dimensions from another generator",
+    "role": "side",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_altgen_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_altgen_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_altgen_s42"
+      }
+     }
+    ]
+   },
+   {
+    "name": "Rubric-RL, retrained",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_retrained_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_retrained_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_retrained_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_retrained_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_retrained_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_retrained_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_retrained_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_retrained_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "atomic_retrained_s44"
+      }
+     }
+    ]
+   },
+   {
+    "name": "ProRubric, retrained",
+    "role": "appendix",
+    "cells": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_retrained_s42.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_retrained_s42"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_retrained_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_retrained_s43.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_retrained_s43"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_retrained_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_retrained_s44.jsonl",
+      "consensus_grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_retrained_s44"
+      },
+      "hbfull_grades": {
+       "path": "grades/hbfull_pro.jsonl",
+       "arm": "prorubric_retrained_s44"
+      }
+     }
+    ]
+   }
+  ],
+  "layout": {
+   "ablations_main": [
+    [
+     "\\method{} variants",
+     [
+      [
+       "ProRubric",
+       "\\method{}"
+      ],
+      [
+       "ProRubric w/o failure clauses",
+       "$-$ failure clauses"
+      ],
+      [
+       "Graded",
+       "partial credit (Graded)"
+      ],
+      [
+       "K=1",
+       "one dimension ($K{=}1$)"
+      ]
+     ]
+    ],
+    [
+     "Same criteria, other aggregation",
+     [
+      [
+       "Rubric-RL",
+       "additive (Rubric-RL)"
+      ],
+      [
+       "raw-AND",
+       "grouped, verbatim (raw-AND)"
+      ]
+     ]
+    ],
+    [
+     "Other changes",
+     [
+      [
+       "Length-matched",
+       "shorter (Length-matched)"
+      ],
+      [
+       "Weighted",
+       "reweighted (Weighted)"
+      ]
+     ]
+    ]
+   ],
+   "ablations_full": [
+    [
+     "Baselines",
+     [
+      [
+       "Base",
+       "Base",
+       null,
+       null
+      ],
+      [
+       "Rubric-RL",
+       "Rubric-RL",
+       false,
+       false
+      ],
+      [
+       "RuscaRL",
+       "RuscaRL",
+       false,
+       false
+      ],
+      [
+       "OPSD",
+       "OPSD",
+       null,
+       null
+      ]
+     ]
+    ],
+    [
+     "Aggregation changed",
+     [
+      [
+       "raw-AND",
+       "raw-AND (text unchanged)",
+       true,
+       false
+      ],
+      [
+       "Graded",
+       "Graded (4-level credit)",
+       true,
+       false
+      ],
+      [
+       "ProRubric",
+       "\\method{}",
+       true,
+       false
+      ]
+     ]
+    ],
+    [
+     "Appropriateness criterion added",
+     [
+      [
+       "Rubric-RL + appr. criterion",
+       "Rubric-RL + appr.\\ criterion",
+       false,
+       true
+      ],
+      [
+       "ProRubric + appr. criterion",
+       "\\method{} + appr.\\ criterion",
+       true,
+       true
+      ]
+     ]
+    ],
+    [
+     "Controls",
+     [
+      [
+       "ProRubric w/o failure clauses",
+       "\\method{} w/o fails-if",
+       true,
+       false
+      ],
+      [
+       "K=1",
+       "$K{=}1$ (one criterion)",
+       true,
+       false
+      ],
+      [
+       "Length-matched",
+       "Length-matched (4,096-token limit)",
+       false,
+       false
+      ],
+      [
+       "Weighted",
+       "Rubric-RL, weighted criteria",
+       false,
+       false
+      ],
+      [
+       "ProRubric, dimensions from another generator",
+       "\\method{}, dimensions from another generator",
+       true,
+       false
+      ]
+     ]
+    ],
+    [
+     "KL coefficient swept",
+     [
+      [
+       "Rubric-RL, beta=0.005",
+       "Rubric-RL, $\\beta{=}0.005$",
+       false,
+       false
+      ],
+      [
+       "Rubric-RL, beta=0.01",
+       "Rubric-RL, $\\beta{=}0.01$",
+       false,
+       false
+      ],
+      [
+       "Rubric-RL, beta=0.04",
+       "Rubric-RL, $\\beta{=}0.04$",
+       false,
+       false
+      ],
+      [
+       "ProRubric, beta=0.005",
+       "\\method{}, $\\beta{=}0.005$",
+       true,
+       false
+      ],
+      [
+       "ProRubric, beta=0.01",
+       "\\method{}, $\\beta{=}0.01$",
+       true,
+       false
+      ],
+      [
+       "ProRubric, beta=0.04",
+       "\\method{}, $\\beta{=}0.04$",
+       true,
+       false
+      ]
+     ]
+    ]
+   ],
+   "per_seed_ablations": [
+    [
+     "Baselines",
+     [
+      [
+       "Rubric-RL",
+       "Rubric-RL"
+      ],
+      [
+       "RuscaRL",
+       "RuscaRL"
+      ],
+      [
+       "OPSD",
+       "OPSD"
+      ]
+     ]
+    ],
+    [
+     "Aggregation changed",
+     [
+      [
+       "raw-AND",
+       "raw-AND"
+      ],
+      [
+       "Graded",
+       "Graded"
+      ],
+      [
+       "ProRubric",
+       "\\method{}"
+      ]
+     ]
+    ],
+    [
+     "Appropriateness criterion added",
+     [
+      [
+       "Rubric-RL + appr. criterion",
+       "Rubric-RL + appr.\\ criterion"
+      ],
+      [
+       "ProRubric + appr. criterion",
+       "\\method{} + appr.\\ criterion"
+      ]
+     ]
+    ],
+    [
+     "Controls",
+     [
+      [
+       "ProRubric w/o failure clauses",
+       "\\method{} w/o fails-if"
+      ],
+      [
+       "K=1",
+       "$K{=}1$"
+      ],
+      [
+       "Length-matched",
+       "Length-matched"
+      ]
+     ]
+    ]
+   ],
+   "seeds": [
+    "Rubric-RL",
+    "ProRubric"
+   ]
+  }
+ },
+ "main_results": {
+  "_comment": "Cross-domain table (main_results.py). One cell per (size, arm, seed); list values are repeated evaluations of one checkpoint. Writing suites point at the writing-domain policy, Arena at the dialogue-domain policy, MedQA/HealthBench at the medical policy, GPQA/ResearchQA at the science policy; SFT is one model for all four.",
+  "questions": {
+   "researchqa": "questions/researchqa_valid.parquet",
+   "healthbench_full": "questions/healthbench_full.parquet"
+  },
+  "healthbench_prompt_set": {
+   "grades": "grades/hbfull_pro_seed42_arms.jsonl"
+  },
+  "cells": [
+   {
+    "size": "4B",
+    "arm": "base",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/writing/base_s42/writingbench_rep1.jsonl",
+     "scores/4b/writing/base_s42/writingbench_rep2.jsonl",
+     "scores/4b/writing/base_s42/writingbench_rep3.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/base_s42/creative_writing_v3_rep1.jsonl",
+     "scores/4b/writing/base_s42/creative_writing_v3_rep2.jsonl",
+     "scores/4b/writing/base_s42/creative_writing_v3_rep3.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/base_s42/arena_hard_v2_rep1.jsonl",
+     "scores/4b/dialogue/base_s42/arena_hard_v2_rep2.jsonl",
+     "scores/4b/dialogue/base_s42/arena_hard_v2_rep3.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/base_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/base_s42/scores_rep1.jsonl",
+     "scores/4b/science/base_s42/scores_rep2.jsonl",
+     "scores/4b/science/base_s42/scores_rep3.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/base_s42/researchqa_grades_rep1.jsonl",
+     "scores/4b/science/base_s42/researchqa_grades_rep2.jsonl",
+     "scores/4b/science/base_s42/researchqa_grades_rep3.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "4B_base_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "sft",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/sft/sft_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/sft/sft_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/sft/sft_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/sft_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/sft/sft_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/sft/sft_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_sft_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "sft",
+    "seed": 43,
+    "writingbench": [
+     "scores/4b/sft/sft_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/sft/sft_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/sft/sft_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/sft_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/sft/sft_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/sft/sft_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_sft_s43"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "sft",
+    "seed": 44,
+    "writingbench": [
+     "scores/4b/sft/sft_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/sft/sft_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/sft/sft_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/sft_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/sft/sft_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/sft/sft_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_sft_s44"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "opsd",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/writing/opsd_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/opsd_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/opsd_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/opsd_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/opsd_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/opsd_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "4B_opsd_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "opsd",
+    "seed": 43,
+    "writingbench": [
+     "scores/4b/writing/opsd_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/opsd_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/opsd_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/opsd_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/opsd_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/opsd_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_opsd_s43"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "opsd",
+    "seed": 44,
+    "writingbench": [
+     "scores/4b/writing/opsd_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/opsd_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/opsd_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/opsd_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/opsd_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/opsd_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_opsd_s44"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "atomic",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/writing/atomic_s42/writingbench_rep1.jsonl",
+     "scores/4b/writing/atomic_s42/writingbench_rep2.jsonl",
+     "scores/4b/writing/atomic_s42/writingbench_rep3.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/atomic_s42/creative_writing_v3_rep1.jsonl",
+     "scores/4b/writing/atomic_s42/creative_writing_v3_rep2.jsonl",
+     "scores/4b/writing/atomic_s42/creative_writing_v3_rep3.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/atomic_s42/arena_hard_v2_rep1.jsonl",
+     "scores/4b/dialogue/atomic_s42/arena_hard_v2_rep2.jsonl",
+     "scores/4b/dialogue/atomic_s42/arena_hard_v2_rep3.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/atomic_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/atomic_s42/scores_rep1.jsonl",
+     "scores/4b/science/atomic_s42/scores_rep2.jsonl",
+     "scores/4b/science/atomic_s42/scores_rep3.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/atomic_s42/researchqa_grades_rep1.jsonl",
+     "scores/4b/science/atomic_s42/researchqa_grades_rep2.jsonl",
+     "scores/4b/science/atomic_s42/researchqa_grades_rep3.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "4B_atomic_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "atomic",
+    "seed": 43,
+    "writingbench": [
+     "scores/4b/writing/atomic_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/atomic_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/atomic_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/atomic_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/atomic_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/atomic_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_atomic_s43"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "atomic",
+    "seed": 44,
+    "writingbench": [
+     "scores/4b/writing/atomic_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/atomic_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/atomic_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/atomic_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/atomic_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/atomic_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_atomic_s44"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "ruscarl",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/writing/ruscarl_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/ruscarl_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/ruscarl_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/ruscarl_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/ruscarl_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/ruscarl_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "4B_ruscarl_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "ruscarl",
+    "seed": 43,
+    "writingbench": [
+     "scores/4b/writing/ruscarl_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/ruscarl_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/ruscarl_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/ruscarl_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/ruscarl_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/ruscarl_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_ruscarl_s43"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "ruscarl",
+    "seed": 44,
+    "writingbench": [
+     "scores/4b/writing/ruscarl_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/ruscarl_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/ruscarl_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/ruscarl_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/ruscarl_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/ruscarl_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_ruscarl_s44"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "prorubric",
+    "seed": 42,
+    "writingbench": [
+     "scores/4b/writing/prorubric_s42/writingbench_rep1.jsonl",
+     "scores/4b/writing/prorubric_s42/writingbench_rep2.jsonl",
+     "scores/4b/writing/prorubric_s42/writingbench_rep3.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/prorubric_s42/creative_writing_v3_rep1.jsonl",
+     "scores/4b/writing/prorubric_s42/creative_writing_v3_rep2.jsonl",
+     "scores/4b/writing/prorubric_s42/creative_writing_v3_rep3.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/prorubric_s42/arena_hard_v2_rep1.jsonl",
+     "scores/4b/dialogue/prorubric_s42/arena_hard_v2_rep2.jsonl",
+     "scores/4b/dialogue/prorubric_s42/arena_hard_v2_rep3.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/prorubric_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/prorubric_s42/scores_rep1.jsonl",
+     "scores/4b/science/prorubric_s42/scores_rep2.jsonl",
+     "scores/4b/science/prorubric_s42/scores_rep3.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/prorubric_s42/researchqa_grades_rep1.jsonl",
+     "scores/4b/science/prorubric_s42/researchqa_grades_rep2.jsonl",
+     "scores/4b/science/prorubric_s42/researchqa_grades_rep3.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "4B_prorubric_s42"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "prorubric",
+    "seed": 43,
+    "writingbench": [
+     "scores/4b/writing/prorubric_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/prorubric_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/prorubric_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/prorubric_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/prorubric_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/prorubric_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_prorubric_s43"
+    }
+   },
+   {
+    "size": "4B",
+    "arm": "prorubric",
+    "seed": 44,
+    "writingbench": [
+     "scores/4b/writing/prorubric_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/4b/writing/prorubric_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/4b/dialogue/prorubric_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/4b/medicine/prorubric_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/4b/science/prorubric_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/4b/science/prorubric_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "4B_prorubric_s44"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "base",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/writing/base_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/base_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/base_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/base_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/base_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/base_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "8B_base_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "sft",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/sft/sft_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/sft/sft_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/sft/sft_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/sft_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/sft/sft_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/sft/sft_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_sft_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "sft",
+    "seed": 43,
+    "writingbench": [
+     "scores/8b/sft/sft_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/sft/sft_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/sft/sft_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/sft_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/sft/sft_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/sft/sft_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_sft_s43"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "sft",
+    "seed": 44,
+    "writingbench": [
+     "scores/8b/sft/sft_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/sft/sft_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/sft/sft_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/sft_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/sft/sft_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/sft/sft_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_sft_s44"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "opsd",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/writing/opsd_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/opsd_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/opsd_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/opsd_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/opsd_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/opsd_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "8B_opsd_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "opsd",
+    "seed": 43,
+    "writingbench": [
+     "scores/8b/writing/opsd_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/opsd_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/opsd_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/opsd_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/opsd_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/opsd_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_opsd_s43"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "opsd",
+    "seed": 44,
+    "writingbench": [
+     "scores/8b/writing/opsd_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/opsd_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/opsd_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/opsd_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/opsd_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/opsd_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_opsd_s44"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "atomic",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/writing/atomic_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/atomic_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/atomic_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/atomic_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/atomic_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/atomic_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "8B_atomic_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "atomic",
+    "seed": 43,
+    "writingbench": [
+     "scores/8b/writing/atomic_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/atomic_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/atomic_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/atomic_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/atomic_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/atomic_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_atomic_s43"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "atomic",
+    "seed": 44,
+    "writingbench": [
+     "scores/8b/writing/atomic_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/atomic_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/atomic_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/atomic_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/atomic_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/atomic_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_atomic_s44"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "ruscarl",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/writing/ruscarl_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/ruscarl_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/ruscarl_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/ruscarl_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/ruscarl_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/ruscarl_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "8B_ruscarl_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "ruscarl",
+    "seed": 43,
+    "writingbench": [
+     "scores/8b/writing/ruscarl_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/ruscarl_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/ruscarl_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/ruscarl_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/ruscarl_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/ruscarl_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_ruscarl_s43"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "ruscarl",
+    "seed": 44,
+    "writingbench": [
+     "scores/8b/writing/ruscarl_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/ruscarl_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/ruscarl_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/ruscarl_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/ruscarl_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/ruscarl_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_ruscarl_s44"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "prorubric",
+    "seed": 42,
+    "writingbench": [
+     "scores/8b/writing/prorubric_s42/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/prorubric_s42/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/prorubric_s42/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/prorubric_s42/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/prorubric_s42/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/prorubric_s42/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro_seed42_arms.jsonl",
+     "arm": "8B_prorubric_s42"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "prorubric",
+    "seed": 43,
+    "writingbench": [
+     "scores/8b/writing/prorubric_s43/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/prorubric_s43/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/prorubric_s43/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/prorubric_s43/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/prorubric_s43/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/prorubric_s43/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_prorubric_s43"
+    }
+   },
+   {
+    "size": "8B",
+    "arm": "prorubric",
+    "seed": 44,
+    "writingbench": [
+     "scores/8b/writing/prorubric_s44/writingbench_rep1.jsonl"
+    ],
+    "creative_writing_v3": [
+     "scores/8b/writing/prorubric_s44/creative_writing_v3_rep1.jsonl"
+    ],
+    "arena_hard_v2": [
+     "scores/8b/dialogue/prorubric_s44/arena_hard_v2_rep1.jsonl"
+    ],
+    "medqa": "scores/8b/medicine/prorubric_s44/scores.jsonl",
+    "gpqa_diamond": [
+     "scores/8b/science/prorubric_s44/scores_rep1.jsonl"
+    ],
+    "researchqa": [
+     "scores/8b/science/prorubric_s44/researchqa_grades_rep1.jsonl"
+    ],
+    "healthbench": {
+     "path": "grades/hbfull_pro.jsonl",
+     "arm": "8B_prorubric_s44"
+    }
+   }
+  ],
+  "paired_average": [
+   [
+    "4B",
+    "atomic",
+    "prorubric"
+   ],
+   [
+    "8B",
+    "atomic",
+    "prorubric"
+   ],
+   [
+    "4B",
+    "ruscarl",
+    "prorubric"
+   ],
+   [
+    "8B",
+    "ruscarl",
+    "prorubric"
+   ]
+  ],
+  "layout": {
+   "main_results": [
+    [
+     "4B",
+     "Qwen3-4B",
+     [
+      [
+       "base",
+       "Base",
+       false
+      ],
+      [
+       "sft",
+       "+ SFT",
+       false
+      ],
+      [
+       "opsd",
+       "+ OPSD",
+       false
+      ],
+      [
+       "atomic",
+       "+ Rubric-RL",
+       false
+      ],
+      [
+       "ruscarl",
+       "+ RuscaRL",
+       false
+      ],
+      [
+       "prorubric",
+       "\\textbf{+ \\method{} (Ours)}",
+       true
+      ]
+     ]
+    ],
+    [
+     "8B",
+     "Qwen3-8B",
+     [
+      [
+       "base",
+       "Base",
+       false
+      ],
+      [
+       "sft",
+       "+ SFT",
+       false
+      ],
+      [
+       "opsd",
+       "+ OPSD",
+       false
+      ],
+      [
+       "atomic",
+       "+ Rubric-RL",
+       false
+      ],
+      [
+       "ruscarl",
+       "+ RuscaRL",
+       false
+      ],
+      [
+       "prorubric",
+       "\\textbf{+ \\method{} (Ours)}",
+       true
+      ]
+     ]
+    ]
+   ],
+   "per_seed_domains": [
+    "4B",
+    "atomic",
+    "prorubric"
+   ]
+  }
+ },
+ "paired_consensus": {
+  "_comment": "Comparisons kept out of the ablation item set (paired_consensus.py --which NAME).",
+  "sft_4b": {
+   "questions": "questions/healthbench_consensus.parquet",
+   "boots": 1000,
+   "groups": {
+    "Base": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/base_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "base_s42"
+      }
+     }
+    ],
+    "Rubric-RL": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/atomic_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/atomic_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/atomic_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "atomic_s44"
+      }
+     }
+    ],
+    "ProRubric": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/prorubric_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/prorubric_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/prorubric_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "prorubric_s44"
+      }
+     }
+    ],
+    "SFT": [
+     {
+      "seed": 42,
+      "responses": "responses/med4b/sft_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "sft_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med4b/sft_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "sft_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med4b/sft_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "sft_s44"
+      }
+     }
+    ]
+   },
+   "pairs": [
+    [
+     "SFT",
+     "Base"
+    ],
+    [
+     "SFT",
+     "Rubric-RL"
+    ],
+    [
+     "SFT",
+     "ProRubric"
+    ]
+   ]
+  },
+  "sft_8b": {
+   "questions": "questions/healthbench_consensus.parquet",
+   "boots": 1000,
+   "groups": {
+    "Base": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/base_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_base_s42"
+      }
+     }
+    ],
+    "Rubric-RL": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/atomic_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/atomic_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/atomic_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s44"
+      }
+     }
+    ],
+    "ProRubric": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/prorubric_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/prorubric_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/prorubric_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s44"
+      }
+     }
+    ],
+    "SFT": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/sft_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_sft_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/sft_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_sft_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/sft_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_sft_s44"
+      }
+     }
+    ]
+   },
+   "pairs": [
+    [
+     "SFT",
+     "Base"
+    ],
+    [
+     "SFT",
+     "Rubric-RL"
+    ],
+    [
+     "SFT",
+     "ProRubric"
+    ]
+   ]
+  },
+  "controls_8b": {
+   "questions": "questions/healthbench_consensus.parquet",
+   "boots": 2000,
+   "groups": {
+    "Base": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/base_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_base_s42"
+      }
+     }
+    ],
+    "Rubric-RL": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/atomic_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/atomic_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/atomic_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_atomic_s44"
+      }
+     }
+    ],
+    "ProRubric": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/prorubric_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/prorubric_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/prorubric_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_prorubric_s44"
+      }
+     }
+    ],
+    "raw-AND": [
+     {
+      "seed": 42,
+      "responses": "responses/med8b/raw_and_s42.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_raw_and_s42"
+      }
+     },
+     {
+      "seed": 43,
+      "responses": "responses/med8b/raw_and_s43.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_raw_and_s43"
+      }
+     },
+     {
+      "seed": 44,
+      "responses": "responses/med8b/raw_and_s44.jsonl",
+      "grades": {
+       "path": "grades/consensus_pro.jsonl",
+       "arm": "8B_raw_and_s44"
+      }
+     }
+    ]
+   },
+   "pairs": [
+    [
+     "raw-AND",
+     "Rubric-RL"
+    ],
+    [
+     "ProRubric",
+     "Rubric-RL"
+    ],
+    [
+     "Rubric-RL",
+     "Base"
+    ]
+   ]
+  }
+ },
+ "crosscheck": {
+  "_comment": "Third-family ranking check (crosscheck_rank.py), seed-42 cells. pro = evaluation-judge grades, alt = third-family grades of the same responses.",
+  "questions": "questions/healthbench_consensus.parquet",
+  "subset_ids": "grades/alt_subset_ids.json",
+  "arms": [
+   {
+    "name": "Base",
+    "label": "Untrained model",
+    "section": "Baselines",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "base_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "base_s42"
+    }
+   },
+   {
+    "name": "Rubric-RL",
+    "label": "Rubric-RL",
+    "section": "Baselines",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "atomic_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "atomic_s42"
+    }
+   },
+   {
+    "name": "raw-AND",
+    "label": "raw-AND",
+    "section": "Aggregation changed",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "raw_and_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "raw_and_s42"
+    }
+   },
+   {
+    "name": "Graded",
+    "label": "Graded",
+    "section": "Aggregation changed",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "graded_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "graded_s42"
+    }
+   },
+   {
+    "name": "ProRubric",
+    "label": "\\method{}",
+    "section": "Aggregation changed",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "prorubric_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "prorubric_s42"
+    }
+   },
+   {
+    "name": "Rubric-RL + appr. criterion",
+    "label": "Rubric-RL + appr.\\ criterion",
+    "section": "Appropriateness criterion added",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "atomic_appr_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "atomic_appr_s42"
+    }
+   },
+   {
+    "name": "ProRubric + appr. criterion",
+    "label": "\\method{} + appr.\\ criterion",
+    "section": "Appropriateness criterion added",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "prorubric_appr_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "prorubric_appr_s42"
+    }
+   },
+   {
+    "name": "Rubric-RL, beta=0.01",
+    "label": "Rubric-RL, $\\beta{=}0.01$",
+    "section": "KL coefficient",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "atomic_kl01_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "atomic_kl01_s42"
+    }
+   },
+   {
+    "name": "Rubric-RL, beta=0.04",
+    "label": "Rubric-RL, $\\beta{=}0.04$",
+    "section": "KL coefficient",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "atomic_kl04_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "atomic_kl04_s42"
+    }
+   },
+   {
+    "name": "ProRubric, beta=0.01",
+    "label": "\\method{}, $\\beta{=}0.01$",
+    "section": "KL coefficient",
+    "pro": {
+     "path": "grades/consensus_pro.jsonl",
+     "arm": "prorubric_kl01_s42"
+    },
+    "alt": {
+     "path": "grades/consensus_alt.jsonl",
+     "arm": "prorubric_kl01_s42"
+    }
+   }
+  ],
+  "pairs": [
+   [
+    "Rubric-RL",
+    "ProRubric"
+   ],
+   [
+    "Rubric-RL",
+    "raw-AND"
+   ],
+   [
+    "Rubric-RL",
+    "Graded"
+   ],
+   [
+    "Base",
+    "Rubric-RL"
+   ],
+   [
+    "Rubric-RL + appr. criterion",
+    "ProRubric + appr. criterion"
+   ],
+   [
+    "Rubric-RL, beta=0.01",
+    "ProRubric, beta=0.01"
+   ]
+  ]
+ }
+}

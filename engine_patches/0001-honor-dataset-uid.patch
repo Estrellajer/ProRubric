@@ -1,0 +1,40 @@
+From 909636bdd1e78e43e554bd456ff61e65c3496503 Mon Sep 17 00:00:00 2001
+From: leek <liumaoqi@bupt.edu.cn>
+Date: Sat, 5 Sep 2026 07:13:08 -0700
+Subject: [PATCH] trainer: honor a dataset-provided uid so pre-expanded rollout
+ groups (rubric scaffolding) share advantages
+
+The training loop always minted a fresh uid per row, which made it impossible to feed
+pre-expanded groups (e.g. RuscaRL-style scaffolded rollouts where each of the G rows of a
+prompt carries a different scaffold strength). Mirror the validation loop: only mint uids
+when the batch has none.
+
+---
+ verl/trainer/ppo/ray_trainer.py | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/verl/trainer/ppo/ray_trainer.py b/verl/trainer/ppo/ray_trainer.py
+index 4dc39411..d5c96863 100644
+--- a/verl/trainer/ppo/ray_trainer.py
++++ b/verl/trainer/ppo/ray_trainer.py
+@@ -2699,10 +2699,13 @@ class RayPPOTrainer:
+                 batch: DataProto = DataProto.from_single_dict(batch_dict)
+                 batch.meta_info["temperature"] = self.config.actor_rollout_ref.rollout.temperature
+ 
+-                # add uid to batch
+-                batch.non_tensor_batch["uid"] = np.array(
+-                    [str(uuid.uuid4()) for _ in range(len(batch.batch))], dtype=object
+-                )
++                # add uid to batch -- unless the dataset already carries one (pre-expanded
++                # groups such as rubric-scaffolded rollouts share a uid across rows), mirroring
++                # the validation loop above.
++                if "uid" not in batch.non_tensor_batch:
++                    batch.non_tensor_batch["uid"] = np.array(
++                        [str(uuid.uuid4()) for _ in range(len(batch.batch))], dtype=object
++                    )
+ 
+                 gen_batch = self._get_gen_batch(batch)
+ 
+-- 
+2.50.1 (Apple Git-155)
+

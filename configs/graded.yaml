@@ -1,0 +1,101 @@
+# Graded (partial credit per dimension).
+#
+# Hydra override list for `python -m verl.trainer.main_ppo`. ProRubric's
+# training parquet, unchanged. The training judge grades each dimension 0-3
+# (verdict_mode=graded in ../reward/judge_client.py; a dimension contributes
+# grade/3 of its weight) and every training response is scored twice at
+# temperature 0.7 and averaged (RubricJudgeRepeatRewardManager in
+# ../reward/rubric_judge_repeat.py). Validation stays on one greedy binary
+# verdict. Everything else is prorubric.yaml with the token-budget and
+# checkpoint-cadence knobs every later arm sets.
+#
+# Required environment (see configs/README.md):
+#   PRORUBRIC_MODEL_PATH           base model (Qwen3-4B or Qwen3-8B)
+#   PRORUBRIC_TRAIN_PARQUET        ProRubric training parquet (unchanged)
+#   PRORUBRIC_VAL_HELDOUT_PARQUET  held-out validation parquet (the atomic arm's, for every arm)
+#   PRORUBRIC_VAL_BENCH_PARQUET    benchmark validation parquet (medicine: HealthBench held-out)
+#   PRORUBRIC_OUTPUT_DIR           writable output directory
+#   RUBRIC_JUDGE_TRAIN_* / RUBRIC_JUDGE_VAL_* (or the shared RUBRIC_JUDGE_*)
+#                                  training-reward and validation judges; see ../reward/judge_client.py
+# Run with reward/ on PYTHONPATH so `pkg://rubric_judge` resolves.
+- algorithm.adv_estimator=grpo
+- algorithm.norm_adv_by_std_in_grpo=True
+- algorithm.use_kl_in_reward=False
+- data.seed=42
+- data.train_files=${oc.env:PRORUBRIC_TRAIN_PARQUET}
+- "data.val_files=['${oc.env:PRORUBRIC_VAL_HELDOUT_PARQUET}','${oc.env:PRORUBRIC_VAL_BENCH_PARQUET}']"
+- data.prompt_key=prompt
+- actor_rollout_ref.model.path=${oc.env:PRORUBRIC_MODEL_PATH}
+- data.train_batch_size=64
+- reward.num_workers=1
+- data.max_prompt_length=4096
+- data.max_response_length=8192
+- data.filter_overlong_prompts=True
+- data.truncation=error
+- data.return_raw_chat=True
+- ++data.prompt_template_mode=chat   # "++" sets-or-appends: upstream verl v0.8.0 has no such key (chat is its only behaviour), the OPSD engine does
+- +data.apply_chat_template_kwargs.enable_thinking=False
+- actor_rollout_ref.model.use_remove_padding=True
+- actor_rollout_ref.model.enable_gradient_checkpointing=True
+- actor_rollout_ref.rollout.n=8
+- actor_rollout_ref.actor.optim.lr=1e-6
+- actor_rollout_ref.actor.optim.lr_scheduler_type=constant
+- actor_rollout_ref.actor.optim.lr_warmup_steps_ratio=0.1
+- actor_rollout_ref.actor.optim.clip_grad=0.1
+- actor_rollout_ref.actor.ppo_mini_batch_size=32
+- actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=1
+- actor_rollout_ref.actor.ppo_epochs=1
+- actor_rollout_ref.actor.use_dynamic_bsz=True
+- actor_rollout_ref.actor.use_kl_loss=False
+- actor_rollout_ref.actor.kl_loss_coef=0.0
+- actor_rollout_ref.actor.kl_loss_type=low_var_kl
+- actor_rollout_ref.rollout.name=vllm
+- actor_rollout_ref.rollout.temperature=1.0
+- actor_rollout_ref.rollout.top_p=1.0
+- actor_rollout_ref.rollout.top_k=-1
+- actor_rollout_ref.rollout.do_sample=True
+- actor_rollout_ref.rollout.tensor_model_parallel_size=1
+- actor_rollout_ref.rollout.calculate_log_probs=True
+- actor_rollout_ref.rollout.gpu_memory_utilization=0.70
+- actor_rollout_ref.rollout.max_model_len=12288
+- actor_rollout_ref.rollout.max_num_batched_tokens=16384
+- actor_rollout_ref.rollout.max_num_seqs=256
+- actor_rollout_ref.rollout.log_prob_micro_batch_size_per_gpu=1
+- actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=1
+- actor_rollout_ref.rollout.val_kwargs.n=1
+- critic.enable=False
+- reward.reward_manager.source=importlib
+- reward.reward_manager.name=RubricJudgeRepeatRewardManager
+- reward.reward_manager.module.path=pkg://rubric_judge_repeat
+- trainer.total_epochs=5
+- trainer.save_freq=50
+- trainer.test_freq=50
+- trainer.nnodes=1
+- trainer.n_gpus_per_node=8
+- trainer.val_before_train=True
+- 'trainer.logger=["console","file","tensorboard"]'
+- trainer.project_name=prorubric
+- trainer.experiment_name=graded
+- trainer.default_local_dir=${oc.env:PRORUBRIC_OUTPUT_DIR}/checkpoints
+- +reward.rubric_judge.qpm=${oc.env:RUBRIC_JUDGE_QPM,500}
+- +reward.rubric_judge.tpm=${oc.env:RUBRIC_JUDGE_TPM,5000000}
+- +reward.rubric_judge.max_concurrency=${oc.env:RUBRIC_JUDGE_MAX_CONCURRENCY,256}
+- +reward.rubric_judge.score_train=${oc.env:RUBRIC_JUDGE_SCORE_TRAIN,true}
+- +reward.rubric_judge.train_thinking=${oc.env:RUBRIC_JUDGE_TRAIN_THINKING,disabled}
+- +reward.rubric_judge.train_max_tokens=${oc.env:RUBRIC_JUDGE_TRAIN_MAX_TOKENS,1024}
+- +reward.rubric_judge.val_thinking=${oc.env:RUBRIC_JUDGE_VAL_THINKING,disabled}
+- +reward.rubric_judge.dry_run_fake_judge=${oc.env:RUBRIC_JUDGE_DRY_RUN_FAKE,false}
+- hydra.run.dir=/tmp/hydra/graded
+- trainer.total_training_steps=300
+- trainer.max_actor_ckpt_to_keep=2
+- actor_rollout_ref.actor.clip_ratio_low=0.2
+- actor_rollout_ref.actor.clip_ratio_high=0.28
+- actor_rollout_ref.actor.optim.lr_warmup_steps=10
+- actor_rollout_ref.actor.optim.weight_decay=0.1
+- actor_rollout_ref.actor.entropy_coeff=0
+- actor_rollout_ref.actor.ppo_max_token_len_per_gpu=32768
+- actor_rollout_ref.rollout.log_prob_max_token_len_per_gpu=32768
+- +reward.rubric_judge.overlong_buffer_len=4096
+- +reward.rubric_judge.overlong_penalty_factor=0.5
+- +reward.rubric_judge.train_verdict_mode=${oc.env:RUBRIC_JUDGE_TRAIN_VERDICT_MODE,graded}
+- +reward.rubric_judge.repeat_judgments=${oc.env:RUBRIC_JUDGE_REPEAT_JUDGMENTS,2}

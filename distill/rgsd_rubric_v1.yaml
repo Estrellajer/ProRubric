@@ -1,0 +1,16 @@
+schema_version: opd-teacher-context/v1
+profile: rgsd_rubric_v1
+context_kind: rubric_repro_v1
+render_mode: legacy_user_template
+problem_source: extra_info.problem
+solution_source: extra_info.rubric_correct
+teacher_thinking: false
+require_same_model: true
+formal_run_eligible: true
+template: |-
+  {problem}
+
+  Hidden evaluation criteria that a good response should satisfy:
+  {solution}
+
+  After understanding these evaluation criteria, provide your own thorough response to the problem. Address the criteria naturally without explicitly referencing them.

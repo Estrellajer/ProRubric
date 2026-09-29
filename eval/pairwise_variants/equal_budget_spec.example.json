@@ -1,0 +1,78 @@
+{
+ "rows": [
+  {
+   "domain": "medicine",
+   "x": "A",
+   "y": "B",
+   "label": "Rubric-RL vs ProRubric, 2,048-token budget",
+   "questions": [
+    "questions/healthbench_consensus.parquet"
+   ],
+   "data_source": "healthbench_consensus",
+   "ids": "ids/medicine_600.json",
+   "ids_sets": null,
+   "first_n": 0,
+   "responses": {
+    "A": {
+     "42": [
+      "responses_2048/medicine/rubric_rl_s42.jsonl"
+     ],
+     "43": [
+      "responses_2048/medicine/rubric_rl_s43.jsonl"
+     ],
+     "44": [
+      "responses_2048/medicine/rubric_rl_s44.jsonl"
+     ]
+    },
+    "B": {
+     "42": [
+      "responses_2048/medicine/prorubric_s42.jsonl"
+     ],
+     "43": [
+      "responses_2048/medicine/prorubric_s43.jsonl"
+     ],
+     "44": [
+      "responses_2048/medicine/prorubric_s44.jsonl"
+     ]
+    }
+   }
+  },
+  {
+   "domain": "science",
+   "x": "A",
+   "y": "B",
+   "label": "Rubric-RL vs ProRubric, 2,048-token budget",
+   "questions": [
+    "questions/researchqa_valid.parquet"
+   ],
+   "data_source": "researchqa_valid",
+   "ids": "../appropriateness_probe/sample.json",
+   "ids_sets": "researchqa",
+   "first_n": 0,
+   "responses": {
+    "A": {
+     "42": [
+      "responses_2048/science/rubric_rl_s42.jsonl"
+     ],
+     "43": [
+      "responses_2048/science/rubric_rl_s43.jsonl"
+     ],
+     "44": [
+      "responses_2048/science/rubric_rl_s44.jsonl"
+     ]
+    },
+    "B": {
+     "42": [
+      "responses_2048/science/prorubric_s42.jsonl"
+     ],
+     "43": [
+      "responses_2048/science/prorubric_s43.jsonl"
+     ],
+     "44": [
+      "responses_2048/science/prorubric_s44.jsonl"
+     ]
+    }
+   }
+  }
+ ]
+}

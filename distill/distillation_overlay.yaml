@@ -1,0 +1,63 @@
+# Hydra overlay fragment for the OPSD baseline (on-policy self-distillation with
+# the rubric as the teacher's context, following RGSD). Contains only the
+# OPSD-relevant fields of `distillation`; everything else (rollout, actor,
+# reward manager, trainer topology) is in ../configs/opsd.yaml, whose values
+# these mirror.
+#
+# Apply on top of verl/trainer/config/distillation/distillation.yaml, e.g.
+#   python -m verl.trainer.main_ppo \
+#     distillation.enabled=True \
+#     distillation.opsd.enable=True \
+#     distillation.opsd.context_profile_path=/path/to/rgsd_rubric_v1.yaml \
+#     ... (one override per line below)
+
+distillation:
+
+  enabled: true
+
+  # OPSD colocates the teacher in the trainer job (upstream teacher colocate
+  # mode, verl PR #5723/#5745): the teacher is the same checkpoint as the
+  # student, served by an in-job vLLM replica. No dedicated teacher pool.
+  enable_resource_pool: false
+  n_gpus_per_node: 8          # match trainer topology in colocated mode
+  nnodes: 1
+
+  distillation_loss:
+    # OPSD objective of the engine extensions (upstream verl has no `opsd` loss
+    # mode; see upstream/README.md).
+    loss_mode: opsd
+    opsd_objective: jsd              # generalized JSD; beta selects the interpolation
+    opsd_jsd_beta: 0.5               # 0.0 is forward-KL; the runs use symmetric 0.5
+    opsd_jsd_token_clip: 0.05        # per-token clip for the OPSD top-k loss
+    opsd_vocab_support: student_teacher_union   # requires loss_mode=opsd, kd_temperature=1.0
+    topk: 128
+    kd_temperature: 1.0
+    # OPSD trains on the distillation signal alone; the rubric judge is not
+    # scored during training (reward manager present with score_train=False).
+    use_task_rewards: false
+    use_policy_gradient: false
+
+  # Privileged-context block of the engine extensions (DistillationOpsdConfig).
+  opsd:
+    enable: true
+    teacher_thinking: false          # profile rgsd_rubric_v1 sets the same
+    require_same_model: true         # fail closed unless teacher == student identity
+    model_identity: null             # set to the student/teacher model path (or immutable digest)
+    context_profile_path: null       # set to .../rgsd_rubric_v1.yaml
+    context_template: default
+
+  teacher_models:
+    teacher_model:
+      # Same checkpoint as actor_rollout_ref.model.path; require_same_model
+      # compares model_identity (falls back to model_path for in-job teachers).
+      model_path: null               # set to the student model path
+      model_identity: null           # set to the same value
+      inference:
+        name: vllm
+        gpu_memory_utilization: 0.25
+        temperature: 1.0
+        tensor_model_parallel_size: 1
+        max_model_len: 10240
+        max_num_batched_tokens: 12288
+        prompt_length: 6144
+        response_length: 2048

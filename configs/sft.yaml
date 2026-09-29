@@ -1,0 +1,57 @@
+# SFT baseline on RubricHub's reference responses (RISE-RL-aligned supervised recipe).
+#
+# Hydra override list for `python -m verl.trainer.sft_trainer_ray` (hydra config
+# sft_trainer_engine), NOT main_ppo: there is no judge and no reward. The data is
+# RubricHub's own SFT corpus (best of six sampled responses per prompt, the four
+# domains mixed), rendered by ../data/build_sft_rubrichub.py as a `messages`
+# column for verl's MultiTurnSFTDataset. One model per seed serves all four domains.
+#
+# Settings follow RISE-RL's supervised recipe: 3 epochs, lr 1e-5, warmup ratio
+# 0.05, bf16, full-parameter, max sequence length 20,000, global batch 64; weight
+# decay 0.1 as in the RL arms. save_freq = one checkpoint per epoch
+# (26,162 rows // 64 = 408 steps; 1,224 steps in total).
+#
+# Required environment:
+#   PRORUBRIC_MODEL_PATH      base model (Qwen3-4B or Qwen3-8B)
+#   PRORUBRIC_TRAIN_PARQUET   the SFT parquet written by ../data/build_sft_rubrichub.py
+#   PRORUBRIC_OUTPUT_DIR      writable output directory
+#
+# Scale / engine notes (none of them changes the global batch, lr or epochs):
+#   * Qwen3-8B: data.micro_batch_size_per_gpu=1 (a 20k-token sample does not fit twice).
+#   * data.ignore_input_ids_mismatch=True: Qwen3's template inserts an empty
+#     <think></think> block when a whole conversation is rendered, but the SFT
+#     dataset tokenises turn by turn to build the loss mask and the per-turn
+#     rendering has none; the answer tokens (the loss target) are identical either way.
+#   * The runs used 4 data-parallel workers with the driver holding one GPU
+#     (trainer.n_gpus_per_node=4): the SFT driver builds a CUDA tensor for its
+#     token counter, and 64 must divide by the worker count.
+- data.train_files=${oc.env:PRORUBRIC_TRAIN_PARQUET}
+- data.val_files=null
+- data.messages_key=messages
+- data.train_batch_size=64
+- data.micro_batch_size_per_gpu=2
+- data.max_length=20000
+- data.max_token_len_per_gpu=20000
+- data.use_dynamic_bsz=True
+- data.pad_mode=no_padding
+- data.truncation=error
+- data.balance_dp_token=False
+- data.ignore_input_ids_mismatch=True
+- data.enable_thinking_default=False
+- model.path=${oc.env:PRORUBRIC_MODEL_PATH}
+- model.trust_remote_code=True
+- model.enable_gradient_checkpointing=True
+- optim.lr=1e-5
+- optim.lr_warmup_steps_ratio=0.05
+- optim.weight_decay=0.1
+- trainer.total_epochs=3
+- trainer.project_name=prorubric
+- trainer.experiment_name=sft
+- trainer.seed=42
+- trainer.default_local_dir=${oc.env:PRORUBRIC_OUTPUT_DIR}/checkpoints
+- trainer.save_freq=408
+- 'trainer.logger=["console","file","tensorboard"]'
+- trainer.n_gpus_per_node=4
+- trainer.nnodes=1
+- trainer.resume_mode=disable
+- hydra.run.dir=/tmp/hydra/sft

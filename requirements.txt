@@ -1,0 +1,12 @@
+# Pinned to the environment the experiments ran in (Python 3.11.2).
+# Scripts in this package. Training additionally needs verl v0.8.0 (see README.md).
+pyarrow==24.0.0      # parquet I/O everywhere
+httpx==0.28.1        # reward/judge_client.py (pooled connections; falls back to urllib)
+PyYAML==6.0.3        # expanding configs/*.yaml into argv
+numpy==2.2.6         # analysis/, figures/
+matplotlib==3.9.4    # figures/, analysis/training_dynamics/plot_training_dynamics.py (plots were made locally)
+# Optional, per script (versions of the training / evaluation environment):
+#   transformers==5.12.1   data/build_sft_rubrichub.py (tokenizer length filter)
+#   vllm==0.19.1           eval/harness/generate.py
+#   hydra-core==1.3.3, omegaconf==2.3.1   smoke.py --engine
+#   simple-evals dependencies (blobfile pandas==3.0.3 jinja2==3.1.6 requests tqdm==4.67.3 openai==2.44.0)   analysis/hb_metaeval/

@@ -1,0 +1,64 @@
+ProRubric Code and Rubric Data
+Copyright 2026 ProRubric Authors
+
+This product includes software and datasets developed as part of the ProRubric project:
+"Scoring Higher, Answering Worse: Mitigating Reward Hacking in Rubric-Based RL via Protocol-Level Rubrics".
+
+================================================================================
+Attribution Notice for RubricHub Derivative Data (Apache License 2.0)
+================================================================================
+This product includes training datasets and rubric criteria derived from RubricHub:
+  RubricHub: A Comprehensive and Highly Discriminative Rubric Dataset via Automated Coarse-to-Fine Generation
+  Copyright (c) 2026 RubricHub Authors (Li et al., ACL 2026 / arXiv:2601.08430)
+  Licensed under the Apache License, Version 2.0:
+    http://www.apache.org/licenses/LICENSE-2.0
+  Source repository:
+    https://github.com/teqkilla/RubricHub
+    https://huggingface.co/datasets/sojuL/RubricHub_v1
+
+Derived files and transformations in this repository include:
+  - data/build_medical_split.py: processes RuRL/rurbichub_v1_Medical.parquet
+  - data/build_domain_split.py: processes RuRL/rurbichub_v1_{Writing,Chat}.parquet
+  - data/build_sft_rubrichub.py: processes sft_RuFT/rurbichub_v1_best_of_6samples_26k_sft_data.parquet
+  - data/build_prorubric_release.py and control transform scripts (raw-AND, appr. criterion, weighted, no failure clauses)
+
+In accordance with Section 4 of the Apache License, Version 2.0, the original copyright
+and attribution notices are preserved, and all modifications to the prompt/rubric
+structures are documented in data/README.md and manifests.
+
+================================================================================
+Attribution & Compliance Notice for RaR-Science Data
+================================================================================
+This product includes science domain prompt and rubric data derived from RaR-Science:
+  Rubrics as Rewards: Reinforcement Learning Beyond Verifiable Domains
+  Gunjal, Anisha; Wang, Anthony; Lau, Elaine; Nath, Vaskar; He, Yunzhong; Liu, Bing; Hendryx, Sean (ICLR 2026 / arXiv:2507.17746)
+  Source repository:
+    https://huggingface.co/datasets/ScaleAI/RaR-Science
+
+Derived files and transformations in this repository include:
+  - data/build_science_split.py: builds science training and held-out splits
+  - generate/rewrite_atomic.py & data/build_atomic_rw.py: atomic-rw baseline
+  - data/build_raw_and_domain.py: raw-AND control
+
+The dataset card on Hugging Face does not declare a license. The science files released with this project are
+derived from it (prompts, atomic checklists and dimensions) and are provided for research use; the original
+copyright remains with the RaR-Science authors and Scale AI.
+
+================================================================================
+Attribution Notice for openai/simple-evals (MIT License)
+================================================================================
+This product includes benchmark evaluation components derived from openai/simple-evals:
+  Copyright (c) 2024 OpenAI
+  Licensed under the MIT License:
+    https://github.com/openai/simple-evals/blob/main/LICENSE
+Used in eval/healthbench_judge.py and analysis/hb_metaeval/.
+
+================================================================================
+Attribution Notice for veRL (Apache License 2.0)
+================================================================================
+This product contains configuration files, reward manager plugins, and engine patches
+designed for veRL (Volcano Engine Reinforcement Learning):
+  Copyright (c) 2024 Bytedance Ltd. and/or its affiliates
+  Licensed under the Apache License, Version 2.0:
+    http://www.apache.org/licenses/LICENSE-2.0
+  Source: https://github.com/verl-project/verl

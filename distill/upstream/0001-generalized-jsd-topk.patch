@@ -1,0 +1,536 @@
+From 7bad4e91126bf7e3b00da5400db6b099711c2c6b Mon Sep 17 00:00:00 2001
+From: leek <liumaoqi@bupt.edu.cn>
+Date: Tue, 8 Sep 2026 20:27:38 -0700
+Subject: [PATCH] [distill] feat: add a generalized-JSD top-k distillation loss
+
+Distillation currently offers forward KL on the teacher's top-k support, plus
+the single-sample estimators. This adds the generalized Jensen-Shannon
+divergence of Agarwal et al. (GKD, arXiv:2306.13649) as a second top-k loss.
+
+`jsd_beta` interpolates the two directed divergences -- 0 is forward
+KL(teacher||student), 1 is reverse KL(student||teacher), and values in between
+weight the mixture -- so `generalized_jsd_topk` at beta=0 reproduces the
+existing loss and the interesting settings live in between. `jsd_token_clip`
+optionally bounds each vocabulary entry's contribution before the sum, which
+keeps one very confident teacher id from dominating a token's gradient.
+`kd_temperature` applies to both distributions before the divergence;
+forward_kl_topk keeps requiring 1.0 because its mass diagnostics assume an
+untempered partition.
+
+Selecting a second top-k loss needs a small dispatch: compute_topk_loss hard-
+coded compute_forward_kl_topk for every mode, so the backend kernel is now
+looked up by loss_mode through TOPK_KERNEL_BY_LOSS_MODE, with the forward-KL
+kernel as the fallback every existing mode keeps getting.
+
+Tests pin the maths rather than the implementation: beta=0 and beta=1 equal the
+two KLs, beta=0.5 equals the closed-form JSD and is symmetric under swapping the
+arguments, the divergence is zero on identical distributions and bounded by
+log 2, clipping lowers the loss and reports the clipped fraction, and gradients
+reach the student while the teacher term stays detached.
+
+Megatron keeps the forward-KL kernel; a megatron implementation can register
+itself in the same map. The student/teacher union support this loss also
+supports in a research fork needs an actor-side top-k transport and will be a
+separate PR.
+---
+ ...est_distillation_generalized_jsd_on_cpu.py | 105 +++++++++++++++
+ .../_generated_ppo_megatron_trainer.yaml      |   3 +
+ .../_generated_ppo_torchtitan_trainer.yaml    |   3 +
+ .../config/_generated_ppo_trainer.yaml        |   3 +
+ .../config/_generated_ppo_veomni_trainer.yaml |   3 +
+ .../config/distillation/distillation.yaml     |  14 ++
+ verl/trainer/distillation/fsdp/losses.py      |  64 +++++++++
+ verl/trainer/distillation/losses.py           | 125 +++++++++++++++++-
+ verl/workers/config/distillation.py           |  30 +++++
+ 9 files changed, 344 insertions(+), 6 deletions(-)
+ create mode 100644 tests/workers/test_distillation_generalized_jsd_on_cpu.py
+
+diff --git a/tests/workers/test_distillation_generalized_jsd_on_cpu.py b/tests/workers/test_distillation_generalized_jsd_on_cpu.py
+new file mode 100644
+index 00000000..6a00ec8a
+--- /dev/null
++++ b/tests/workers/test_distillation_generalized_jsd_on_cpu.py
+@@ -0,0 +1,105 @@
++# Copyright 2024 Bytedance Ltd. and/or its affiliates
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++"""CPU tests for the generalized-JSD distillation loss."""
++
++import pytest
++import torch
++
++from verl.trainer.distillation.losses import (
++    DISTILLATION_LOSS_REGISTRY,
++    TOPK_KERNEL_BY_LOSS_MODE,
++    generalized_jsd_terms,
++)
++from verl.workers.config import DistillationLossConfig
++
++
++def _log_probs(rows):
++    return torch.log(torch.tensor(rows, dtype=torch.float64))
++
++
++TEACHER = _log_probs([[[0.7, 0.2, 0.1]]])
++STUDENT = _log_probs([[[0.2, 0.3, 0.5]]])
++
++
++def _kl(log_p, log_q):
++    return (log_p.exp() * (log_p - log_q)).sum(dim=-1)
++
++
++def test_beta_zero_is_forward_kl():
++    loss, kl, clipped = generalized_jsd_terms(TEACHER, STUDENT, beta=0.0)
++    torch.testing.assert_close(loss, _kl(TEACHER, STUDENT))
++    torch.testing.assert_close(kl, _kl(TEACHER, STUDENT))
++    assert torch.equal(clipped, torch.zeros_like(clipped))
++
++
++def test_beta_one_is_reverse_kl():
++    loss, _, _ = generalized_jsd_terms(TEACHER, STUDENT, beta=1.0)
++    torch.testing.assert_close(loss, _kl(STUDENT, TEACHER))
++
++
++def test_beta_half_matches_the_closed_form_and_is_symmetric():
++    loss, _, _ = generalized_jsd_terms(TEACHER, STUDENT, beta=0.5)
++    mixed = (0.5 * TEACHER.exp() + 0.5 * STUDENT.exp()).log()
++    expected = 0.5 * _kl(TEACHER, mixed) + 0.5 * _kl(STUDENT, mixed)
++    torch.testing.assert_close(loss, expected)
++    swapped, _, _ = generalized_jsd_terms(STUDENT, TEACHER, beta=0.5)
++    torch.testing.assert_close(loss, swapped)
++
++
++def test_jsd_is_bounded_by_log_two_and_zero_on_identical_distributions():
++    loss, _, _ = generalized_jsd_terms(TEACHER, STUDENT, beta=0.5)
++    assert 0.0 < loss.item() <= torch.log(torch.tensor(2.0)).item()
++    same, _, _ = generalized_jsd_terms(TEACHER, TEACHER.clone(), beta=0.5)
++    torch.testing.assert_close(same, torch.zeros_like(same), atol=1e-12, rtol=0)
++
++
++def test_token_clip_bounds_components_and_reports_the_clipped_fraction():
++    unclipped, _, none_clipped = generalized_jsd_terms(TEACHER, STUDENT, beta=0.0)
++    clip = 0.1
++    clipped_loss, _, ratio = generalized_jsd_terms(TEACHER, STUDENT, beta=0.0, token_clip=clip)
++    assert clipped_loss.item() < unclipped.item()
++    assert clipped_loss.item() <= clip * TEACHER.shape[-1]
++    assert none_clipped.item() == 0.0
++    assert 0.0 < ratio.item() <= 1.0
++
++
++def test_gradients_reach_the_student_only():
++    teacher = TEACHER.clone().requires_grad_(True)
++    student = STUDENT.clone().requires_grad_(True)
++    loss, _, _ = generalized_jsd_terms(teacher, student, beta=0.5)
++    loss.sum().backward()
++    assert student.grad is not None and torch.isfinite(student.grad).all()
++    assert teacher.grad is None, "the teacher term must be detached"
++
++
++def test_the_loss_is_registered_and_routed_to_a_kernel():
++    assert "generalized_jsd_topk" in DISTILLATION_LOSS_REGISTRY
++    assert TOPK_KERNEL_BY_LOSS_MODE["generalized_jsd_topk"] == "compute_generalized_jsd_topk"
++    import verl.trainer.distillation.fsdp.losses as fsdp_losses
++
++    assert hasattr(fsdp_losses, "compute_generalized_jsd_topk")
++
++
++@pytest.mark.parametrize(
++    "field, value",
++    [("jsd_beta", 1.5), ("jsd_beta", float("nan")), ("jsd_token_clip", 0.0), ("kd_temperature", 0.0)],
++)
++def test_config_rejects_out_of_range_settings(field, value):
++    with pytest.raises(ValueError):
++        DistillationLossConfig(loss_mode="generalized_jsd_topk", **{field: value})
++
++
++def test_forward_kl_still_requires_an_untempered_partition():
++    with pytest.raises(ValueError, match="kd_temperature=1.0"):
++        DistillationLossConfig(loss_mode="forward_kl_topk", kd_temperature=2.0)
+diff --git a/verl/trainer/config/_generated_ppo_megatron_trainer.yaml b/verl/trainer/config/_generated_ppo_megatron_trainer.yaml
+index bd912745..dc9a5fc6 100644
+--- a/verl/trainer/config/_generated_ppo_megatron_trainer.yaml
++++ b/verl/trainer/config/_generated_ppo_megatron_trainer.yaml
+@@ -925,6 +925,9 @@ distillation:
+     distillation_loss_coef: 1.0
+     loss_max_clamp: null
+     log_prob_min_clamp: null
++    jsd_beta: 0.5
++    jsd_token_clip: null
++    kd_temperature: 1.0
+     use_policy_gradient: false
+     policy_loss_mode: vanilla
+     clip_ratio: 0.2
+diff --git a/verl/trainer/config/_generated_ppo_torchtitan_trainer.yaml b/verl/trainer/config/_generated_ppo_torchtitan_trainer.yaml
+index c7f3a484..326b26fe 100644
+--- a/verl/trainer/config/_generated_ppo_torchtitan_trainer.yaml
++++ b/verl/trainer/config/_generated_ppo_torchtitan_trainer.yaml
+@@ -820,6 +820,9 @@ distillation:
+     distillation_loss_coef: 1.0
+     loss_max_clamp: null
+     log_prob_min_clamp: null
++    jsd_beta: 0.5
++    jsd_token_clip: null
++    kd_temperature: 1.0
+     use_policy_gradient: false
+     policy_loss_mode: vanilla
+     clip_ratio: 0.2
+diff --git a/verl/trainer/config/_generated_ppo_trainer.yaml b/verl/trainer/config/_generated_ppo_trainer.yaml
+index f7006d48..922d9e22 100644
+--- a/verl/trainer/config/_generated_ppo_trainer.yaml
++++ b/verl/trainer/config/_generated_ppo_trainer.yaml
+@@ -889,6 +889,9 @@ distillation:
+     distillation_loss_coef: 1.0
+     loss_max_clamp: null
+     log_prob_min_clamp: null
++    jsd_beta: 0.5
++    jsd_token_clip: null
++    kd_temperature: 1.0
+     use_policy_gradient: false
+     policy_loss_mode: vanilla
+     clip_ratio: 0.2
+diff --git a/verl/trainer/config/_generated_ppo_veomni_trainer.yaml b/verl/trainer/config/_generated_ppo_veomni_trainer.yaml
+index bdbd7e35..cf9fe5dd 100644
+--- a/verl/trainer/config/_generated_ppo_veomni_trainer.yaml
++++ b/verl/trainer/config/_generated_ppo_veomni_trainer.yaml
+@@ -860,6 +860,9 @@ distillation:
+     distillation_loss_coef: 1.0
+     loss_max_clamp: null
+     log_prob_min_clamp: null
++    jsd_beta: 0.5
++    jsd_token_clip: null
++    kd_temperature: 1.0
+     use_policy_gradient: false
+     policy_loss_mode: vanilla
+     clip_ratio: 0.2
+diff --git a/verl/trainer/config/distillation/distillation.yaml b/verl/trainer/config/distillation/distillation.yaml
+index 84ee7932..8340a981 100644
+--- a/verl/trainer/config/distillation/distillation.yaml
++++ b/verl/trainer/config/distillation/distillation.yaml
+@@ -39,6 +39,20 @@ distillation_loss:
+   # Optional min clamp value for log probabilities for stability, e.g., log q - log p where p or q are very close to zero.
+   log_prob_min_clamp: null
+ 
++  # Interpolation between the two directed divergences, read only by
++  # loss_mode=generalized_jsd_topk. 0 is forward KL(teacher||student), 1 is
++  # reverse KL(student||teacher), values in between weight the mixture
++  # distribution (generalized JSD, arXiv:2306.13649).
++  jsd_beta: 0.5
++
++  # Optional per-vocabulary-entry clip on the loss components before they are
++  # summed over the support. null disables it.
++  jsd_token_clip: null
++
++  # Softmax temperature applied to both distributions before the divergence.
++  # forward_kl_topk requires 1.0; generalized_jsd_topk honours other values.
++  kd_temperature: 1.0
++
+   # Whether to incorporate distillation loss as a reward.
+   use_policy_gradient: false
+ 
+diff --git a/verl/trainer/distillation/fsdp/losses.py b/verl/trainer/distillation/fsdp/losses.py
+index 602d3875..85b5d8c8 100644
+--- a/verl/trainer/distillation/fsdp/losses.py
++++ b/verl/trainer/distillation/fsdp/losses.py
+@@ -16,6 +16,7 @@
+ import torch
+ import torch.nn.functional as F
+ 
++from verl.trainer.distillation.losses import generalized_jsd_terms
+ from verl.utils.ulysses import (
+     get_ulysses_sequence_parallel_world_size,
+     slice_input_tensor,
+@@ -72,6 +73,69 @@ def kl_divergence(log_q: torch.Tensor, log_p: torch.Tensor) -> torch.Tensor:
+     return kld.sum(dim=-1)
+ 
+ 
++def compute_generalized_jsd_topk(
++    student_logits: torch.Tensor,
++    teacher_topk_log_probs: torch.Tensor,
++    teacher_topk_ids: torch.Tensor,
++    config: DistillationConfig,
++    data_format: str,
++) -> dict[str, torch.Tensor]:
++    """Compute the generalized-JSD distillation loss on the teacher's top-k support.
++
++    Both distributions are renormalized over the teacher's top-k ids after the
++    KD temperature is applied, so the divergence is the truncated analogue of
++    the full-vocabulary one. See ``DistillationLossConfig.jsd_beta`` and
++    ``jsd_token_clip``.
++
++    Args:
++        student_logits: (bsz, seqlen/sp_size, vocab_size).
++        teacher_topk_log_probs: (bsz, seqlen, topk).
++        teacher_topk_ids: (bsz, seqlen, topk).
++        data_format: "thd" or "bshd".
++
++    Returns:
++        distillation_losses, student_teacher_kl, student_mass, teacher_mass and
++        jsd_clip_ratio, each (bsz, seqlen/sp_size).
++    """
++    assert teacher_topk_log_probs.is_nested and teacher_topk_ids.is_nested
++    teacher_topk_log_probs = teacher_topk_log_probs.values().unsqueeze(0)
++    teacher_topk_ids = teacher_topk_ids.values().unsqueeze(0)
++
++    if get_ulysses_sequence_parallel_world_size() > 1:
++        teacher_topk_log_probs = slice_input_tensor(teacher_topk_log_probs, dim=1)
++        teacher_topk_ids = slice_input_tensor(teacher_topk_ids, dim=1)
++    assert teacher_topk_log_probs.shape[:2] == teacher_topk_ids.shape[:2] == student_logits.shape[:2]
++
++    loss_config: DistillationLossConfig = config.distillation_loss
++    temperature = loss_config.kd_temperature
++    student_log_probs = F.log_softmax(student_logits.float(), dim=-1)
++    student_topk_log_probs = torch.gather(student_log_probs, dim=-1, index=teacher_topk_ids.long())
++
++    # Reported before renormalization, so the numbers stay comparable with the
++    # forward-KL kernel's top-k mass diagnostics.
++    student_mass = student_topk_log_probs.exp().sum(dim=-1)
++    teacher_mass = teacher_topk_log_probs.exp().sum(dim=-1)
++
++    teacher_support_log_probs = F.log_softmax(teacher_topk_log_probs.float() / temperature, dim=-1)
++    student_topk_logits = torch.gather(student_logits, dim=-1, index=teacher_topk_ids.long())
++    student_support_log_probs = F.log_softmax(student_topk_logits.float() / temperature, dim=-1)
++
++    distillation_losses, student_teacher_kl, clip_ratio = generalized_jsd_terms(
++        teacher_topk_log_probs=teacher_support_log_probs,
++        student_topk_log_probs=student_support_log_probs,
++        beta=loss_config.jsd_beta,
++        token_clip=loss_config.jsd_token_clip,
++    )
++
++    return {
++        "distillation_losses": distillation_losses,
++        "student_teacher_kl": student_teacher_kl,
++        "student_mass": student_mass,
++        "teacher_mass": teacher_mass,
++        "jsd_clip_ratio": clip_ratio,
++    }
++
++
+ def compute_forward_kl_topk(
+     student_logits: torch.Tensor,
+     teacher_topk_log_probs: torch.Tensor,
+diff --git a/verl/trainer/distillation/losses.py b/verl/trainer/distillation/losses.py
+index eb1e1bbd..a88561fd 100644
+--- a/verl/trainer/distillation/losses.py
++++ b/verl/trainer/distillation/losses.py
+@@ -68,6 +68,14 @@ class DistillationLossSettings(BaseConfig):
+             )
+ 
+ 
++# Top-k losses are computed inside the logits processor, so each one needs a
++# backend kernel as well as a registered aggregation function. Modes absent from
++# this map fall back to the forward-KL kernel, which is what they used before
++# more than one top-k kernel existed.
++TOPK_KERNEL_BY_LOSS_MODE: dict[str, str] = {
++    "generalized_jsd_topk": "compute_generalized_jsd_topk",
++}
++
+ DISTILLATION_LOSS_REGISTRY: dict[str, DistillationLossFn] = {}
+ DISTILLATION_SETTINGS_REGISTRY: dict[str, DistillationLossSettings] = {}
+ 
+@@ -134,19 +142,23 @@ def compute_topk_loss(
+     - student_mass: (bsz, seqlen/cp_size)
+     - teacher_mass: (bsz, seqlen/cp_size)
+     """
++    loss_mode = distillation_config.distillation_loss.loss_mode
+     match config.strategy:
+         # VeOmni uses FSDP2 internally, so its loss computation is identical to FSDP.
+         case "fsdp" | "veomni":
+-            import verl.trainer.distillation.fsdp.losses as fsdp_losses
+-
+-            distillation_loss_fn = fsdp_losses.compute_forward_kl_topk
++            import verl.trainer.distillation.fsdp.losses as backend_losses
+         case "megatron":
+-            import verl.trainer.distillation.megatron.losses as megatron_losses
+-
+-            distillation_loss_fn = megatron_losses.compute_forward_kl_topk
++            import verl.trainer.distillation.megatron.losses as backend_losses
+         case _:
+             raise NotImplementedError(f"Unsupported strategy: {config.strategy=}")
+ 
++    kernel_name = TOPK_KERNEL_BY_LOSS_MODE.get(loss_mode, "compute_forward_kl_topk")
++    distillation_loss_fn = getattr(backend_losses, kernel_name, None)
++    if distillation_loss_fn is None:
++        raise NotImplementedError(
++            f"{config.strategy} backend has no top-k kernel {kernel_name!r} for loss_mode={loss_mode!r}."
++        )
++
+     outputs = distillation_loss_fn(
+         student_logits=student_logits,
+         teacher_topk_log_probs=data["teacher_logprobs"],
+@@ -302,6 +314,107 @@ def distillation_loss(
+     return distillation_loss, distillation_metrics
+ 
+ 
++def generalized_jsd_terms(
++    teacher_topk_log_probs: torch.Tensor,
++    student_topk_log_probs: torch.Tensor,
++    *,
++    beta: float = 0.5,
++    token_clip: Optional[float] = None,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
++    """Generalized Jensen-Shannon divergence on a shared sparse support.
++
++    Both arguments are log-probabilities already renormalized over the same
++    support (the teacher's top-k ids), so the divergence is the truncated
++    analogue of the full-vocabulary one.
++
++    ``beta`` interpolates the two directed divergences: 0 gives forward
++    KL(teacher||student), 1 gives reverse KL(student||teacher), and values in
++    between weight the mixture M = beta*teacher + (1-beta)*student, which is the
++    generalized JSD of Agarwal et al. (arXiv:2306.13649).
++
++    Returns per-token loss, a forward-KL diagnostic on the same support, and the
++    fraction of vocabulary entries whose loss component hit ``token_clip``.
++    """
++    teacher_log_p = teacher_topk_log_probs.detach()
++    student_log_p = student_topk_log_probs
++
++    teacher_p = teacher_log_p.exp()
++    student_p = student_log_p.exp()
++    if beta <= 0.0:
++        token_losses = teacher_p * (teacher_log_p - student_log_p)
++    elif beta >= 1.0:
++        token_losses = student_p * (student_log_p - teacher_log_p)
++    else:
++        mixed_p = beta * teacher_p + (1.0 - beta) * student_p
++        mixed_log_p = torch.log(torch.clamp(mixed_p, min=1e-12))
++        token_losses = beta * teacher_p * (teacher_log_p - mixed_log_p) + (1.0 - beta) * student_p * (
++            student_log_p - mixed_log_p
++        )
++
++    if token_clip is not None:
++        clipped = (token_losses.detach() > token_clip).float()
++        token_losses = token_losses.clamp(max=token_clip)
++    else:
++        clipped = torch.zeros_like(token_losses)
++
++    per_token_loss = token_losses.sum(dim=-1)
++    topk_kl = (teacher_p * (teacher_log_p - student_log_p)).sum(dim=-1)
++    return per_token_loss, topk_kl, clipped.mean(dim=-1)
++
++
++@register_distillation_loss(DistillationLossSettings(names=["generalized_jsd_topk"], use_topk=True))  # type: ignore[arg-type]
++def compute_generalized_jsd_topk(
++    config: ActorConfig,
++    distillation_config: DistillationConfig,
++    model_output: dict,
++    data: TensorDict,
++) -> tuple[torch.Tensor, dict[str, Any]]:
++    """Aggregate the generalized-JSD top-k loss produced by the logits processor.
++
++    Returns:
++    - distillation_losses: (bsz, resp_len)
++    - distillation_metrics: Dictionary of metrics.
++    """
++    distillation_losses = no_padding_2_padding(model_output["distillation_losses"], data)
++    topk_kl = no_padding_2_padding(model_output["student_teacher_kl"], data)
++    student_mass = no_padding_2_padding(model_output["student_mass"], data)
++    teacher_mass = no_padding_2_padding(model_output["teacher_mass"], data)
++    clip_ratio_mat = no_padding_2_padding(model_output["jsd_clip_ratio"], data)
++    if data["response_mask"].is_nested:
++        response_mask_bool = data["response_mask"].bool().to_padded_tensor(False)
++    else:
++        response_mask_bool = data["response_mask"].bool()
++    assert (
++        distillation_losses.shape
++        == topk_kl.shape
++        == student_mass.shape
++        == teacher_mass.shape
++        == clip_ratio_mat.shape
++        == response_mask_bool.shape
++    )
++
++    def _agg(mat):
++        return agg_loss(
++            loss_mat=mat,
++            loss_mask=response_mask_bool,
++            loss_agg_mode=config.loss_agg_mode,
++            **config.global_batch_info,
++        )
++
++    valid_student_mass = student_mass[response_mask_bool]
++    valid_teacher_mass = teacher_mass[response_mask_bool]
++    metrics = {
++        "distillation/generalized_jsd/loss": Metric(AggregationType.MEAN, _agg(distillation_losses).detach()),
++        "distillation/generalized_jsd/student_teacher_kl": Metric(
++            AggregationType.MEAN, _agg(topk_kl.detach()).detach()
++        ),
++        "distillation/generalized_jsd/token_clip_ratio": _agg(clip_ratio_mat).detach().item(),
++        "distillation/student_mass": valid_student_mass.mean().item(),
++        "distillation/teacher_mass": valid_teacher_mass.mean().item(),
++    }
++    return distillation_losses, metrics
++
++
+ @register_distillation_loss(DistillationLossSettings(names=["forward_kl_topk"], use_topk=True))  # type: ignore[arg-type]
+ def compute_forward_kl_topk(
+     config: ActorConfig,
+diff --git a/verl/workers/config/distillation.py b/verl/workers/config/distillation.py
+index b58f8bcc..66a535a2 100644
+--- a/verl/workers/config/distillation.py
++++ b/verl/workers/config/distillation.py
+@@ -13,6 +13,7 @@
+ # limitations under the License.
+ 
+ import logging
++import math
+ import os
+ from dataclasses import dataclass, field
+ from typing import Optional
+@@ -81,6 +82,23 @@ class DistillationLossConfig(BaseConfig):
+     # overhead (saved-tensor total stays constant either way).
+     chunked_topk_chunk_size: int = 4096
+ 
++    # Generalized-JSD knobs, read only by ``loss_mode='generalized_jsd_topk'``.
++    # ``jsd_beta`` interpolates between the two directed divergences: 0 is
++    # forward KL(teacher||student), 1 is reverse KL(student||teacher), and
++    # values in between weight the mixture distribution accordingly, which is
++    # the generalized Jensen-Shannon divergence of Agarwal et al. (GKD,
++    # arXiv:2306.13649).
++    jsd_beta: float = 0.5
++    # Optional per-vocabulary-entry clip applied to the loss components before
++    # they are summed over the support. ``None`` disables clipping. This bounds
++    # the gradient contribution of a single token id when the teacher is very
++    # confident and the student is not.
++    jsd_token_clip: Optional[float] = None
++    # Softmax temperature applied to both distributions before the divergence.
++    # Only ``generalized_jsd_topk`` honours it; forward_kl_topk requires 1.0
++    # because its top-k mass diagnostics assume an untempered partition.
++    kd_temperature: float = 1.0
++
+     use_policy_gradient: bool = True
+     policy_loss_mode: str = "vanilla"
+     clip_ratio: float = 0.2
+@@ -98,6 +116,18 @@ class DistillationLossConfig(BaseConfig):
+     loss_settings: Optional[dict] = None
+ 
+     def __post_init__(self):
++        if not math.isfinite(self.jsd_beta) or not 0.0 <= self.jsd_beta <= 1.0:
++            raise ValueError(f"jsd_beta must be finite and in [0, 1], got {self.jsd_beta}.")
++        if self.jsd_token_clip is not None and (not math.isfinite(self.jsd_token_clip) or self.jsd_token_clip <= 0):
++            raise ValueError(f"jsd_token_clip must be positive and finite when set, got {self.jsd_token_clip}.")
++        if not math.isfinite(self.kd_temperature) or self.kd_temperature <= 0:
++            raise ValueError(f"kd_temperature must be finite and positive, got {self.kd_temperature}.")
++        if self.loss_mode == "forward_kl_topk" and self.kd_temperature != 1.0:
++            raise ValueError(
++                "forward_kl_topk reports top-k mass over an untempered partition and requires "
++                f"kd_temperature=1.0, got {self.kd_temperature}."
++            )
++
+         self._mutable_fields.add("loss_settings")
+         from verl.trainer.distillation.losses import DistillationLossSettings, get_distillation_loss_settings
+ 
+-- 
+2.50.1 (Apple Git-155)
+
