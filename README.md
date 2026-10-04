@@ -3,7 +3,7 @@
 # ProRubric: Protocol-Level Rubrics for Reinforcement Learning
 
 <p align="center">
-  <a href="https://github.com/Estrellajer/ProRubric"><img src="https://img.shields.io/badge/arXiv-Preprint_Coming_Soon-b31b1b.svg" alt="arXiv"></a>
+  <a href="https://arxiv.org/abs/2609.38847"><img src="https://img.shields.io/badge/arXiv-2609.38847-b31b1b.svg" alt="arXiv"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <a href="https://www.python.org/downloads/release/python-3112/"><img src="https://img.shields.io/badge/Python-3.11.2-brightgreen.svg" alt="Python"></a>
   <a href="https://github.com/verl-project/verl"><img src="https://img.shields.io/badge/RL_Engine-verl_v0.8.0-orange.svg" alt="verl"></a>
@@ -74,6 +74,8 @@ VERL_CONFIG_DIR=/path/to/verl/verl/trainer/config python3 smoke.py --engine
 ---
 
 ## End-to-End Workflow (Medicine Example)
+
+> **Tip**: To directly reproduce RL training without rebuilding datasets from raw sources, download the pre-packaged splits from [Released Rubric Datasets](#released-rubric-datasets) to your local `release/` directory and skip directly to **Step 3**.
 
 ### Step 1. Prepare Atomic Splits
 ```bash
@@ -172,6 +174,53 @@ Variables fall back to the shared `RUBRIC_JUDGE_*` prefix if role-specific varia
 
 ---
 
+## Released Rubric Datasets
+
+The pre-built ProRubric datasets (including protocol dimensions with failure clauses, atomic checklists, and held-out validation sets) are hosted for direct download:
+
+- **Google Drive**: [ProRubric Public Release Data](https://drive.google.com/drive/folders/1X2IzyCaH9gkXANP6kSgLByxdW1gbdkJg?usp=drive_link)
+- **Hugging Face**: *(Mirror repository coming soon)*
+
+The release contains 16 core distribution files (8 `.parquet` splits and their corresponding `.sha256` checksums), alongside `MANIFEST.json` and dropped query logs under `excluded_ids/`.
+
+### File Manifest & Statistics
+
+| File | Rows | Description |
+|---|---|---|
+| `medical_prorubric_train.parquet` | 12,500 | RubricHub medical prompts with atomic checklists and protocol dimensions |
+| `writing_prorubric_train.parquet` | 11,836 | RubricHub writing prompts with protocol dimensions |
+| `science_prorubric_train.parquet` | 18,326 | RaR-Science training split with protocol dimensions |
+| `dialogue_prorubric_train.parquet` | 8,922 | RubricHub dialogue prompts with protocol dimensions |
+| `medical_atomic_heldout.parquet` | 300 | Held-out medical prompts with atomic checklists (seed 42) |
+| `medical_atomic_healthbench_heldout.parquet` | 300 | HealthBench held-out validation set (seed 42) |
+| `medical_atomic_healthbench_disjoint.parquet` | 300 | HealthBench disjoint validation set (seed 43) |
+| `writing_atomic_heldout.parquet` | 300 | Held-out writing prompts with atomic checklists |
+| `dialogue_atomic_heldout.parquet` | 300 | Held-out dialogue prompts with atomic checklists |
+| `science_atomic_heldout.parquet` | 2,292 | Held-out science validation split |
+| `science_atomic_heldout300.parquet` | 300 | Held-out science evaluation subset (300 prompts) |
+| `excluded_ids/*.json` | — | Drop records and exclusion reasons for questions failing quality rules |
+| `MANIFEST.json` | — | Manifest containing exact file byte sizes and SHA256 integrity digests |
+
+### Parquet Schema (`*_prorubric_train.parquet`)
+
+Each record in the training parquet files contains:
+- `id` (`string`): Unique prompt identifier.
+- `domain` (`string`): Domain label (`medical`, `writing`, `dialogue`, `science`).
+- `prompt` (`string`): User instruction / query text.
+- `atomic_rubric` (`list<{criterion: string, weight: float}>`): Original atomic checklist (20–30 criteria).
+- `dimensions` (`list<{name: string, criterion: string, weight: float, atomic_indices: list<int>}>`): Protocol-level dimensions. The `criterion` field specifies conjunctive requirements terminating in an explicit `"fails if ..."` clause; `atomic_indices` are 1-based index pointers into `atomic_rubric`.
+- `repaired` (`bool`): Flag indicating if automatic repair was applied to fix generator grouping discrepancies.
+- `generator` (`string`): Model that produced the dimensions (`deepseek-v4-pro`).
+
+### Structural Invariants & Filtering Rules
+- **Disjoint Partition**: Every atomic criterion belongs to exactly one dimension.
+- **Weight Conservation**: Each dimension's weight is the sum of absolute weights of its assigned criteria ($\sum |w_i|$).
+- **Dimension Count**: 2–5 dimensions per prompt (mean: 4.6 in Medicine, 4.6 in Writing, 4.4 in Dialogue, 3.9 in Science).
+- **Kept / Excluded Counts**: Medicine 12,500 / 19 (62 kept rows repaired); Writing 11,836 / 164; Dialogue 8,922 / 78; Science 18,326 / 7. Repaired rows were excluded in writing, dialogue, and science where manual repair audit was not performed.
+- **Lineage & Licensing**: Derived from RubricHub v1 (`sojuL/RubricHub_v1`, Apache-2.0) and RaR-Science (`ScaleAI/RaR-Science`, research use, copyright Scale AI). See [`NOTICE`](NOTICE) and `public/README.md`.
+
+---
+
 ## Dataset Resources
 
 | Domain | Source Dataset | Purpose |
@@ -205,7 +254,16 @@ For consistency with ongoing code and data schemas, internal identifiers map to 
 
 ## Citation
 
-A preprint will be released on arXiv soon. Citation information will be updated upon release.
+If you find this work, code, or datasets helpful, please cite our paper:
+
+```bibtex
+@article{liu2026scoring,
+  title={Scoring Higher, Answering Worse: Mitigating Reward Hacking in Rubric-Based RL via Protocol-Level Rubrics},
+  author={Liu, Maoqi and He, Junwei and Zhang, Bowen and Li, Feiran and Ma, Wentao and Lin, Rongyi and Zhong, Shuhan and Fang, Quan},
+  journal={arXiv preprint arXiv:2609.38847},
+  year={2026}
+}
+```
 
 ---
 

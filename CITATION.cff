@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use this software or data in your research, please cite it as below."
+title: "Scoring Higher, Answering Worse: Mitigating Reward Hacking in Rubric-Based RL via Protocol-Level Rubrics"
+version: 1.0.0
+date-released: "2026-09-30"
+license: Apache-2.0
+repository-code: "https://github.com/Estrellajer/ProRubric"
+url: "https://arxiv.org/abs/2609.38847"
+authors:
+  - family-names: Liu
+    given-names: Maoqi
+    affiliation: "Beijing University of Posts and Telecommunications; ByteDance"
+  - family-names: He
+    given-names: Junwei
+    affiliation: "ByteDance"
+  - family-names: Zhang
+    given-names: Bowen
+    affiliation: "ByteDance"
+  - family-names: Li
+    given-names: Feiran
+    affiliation: "ByteDance"
+  - family-names: Ma
+    given-names: Wentao
+    affiliation: "ByteDance"
+  - family-names: Lin
+    given-names: Rongyi
+    affiliation: "ByteDance"
+  - family-names: Zhong
+    given-names: Shuhan
+    affiliation: "ByteDance"
+  - family-names: Fang
+    given-names: Quan
+    affiliation: "Beijing University of Posts and Telecommunications"
+preferred-citation:
+  type: article
+  title: "Scoring Higher, Answering Worse: Mitigating Reward Hacking in Rubric-Based RL via Protocol-Level Rubrics"
+  authors:
+    - family-names: Liu
+      given-names: Maoqi
+    - family-names: He
+      given-names: Junwei
+    - family-names: Zhang
+      given-names: Bowen
+    - family-names: Li
+      given-names: Feiran
+    - family-names: Ma
+      given-names: Wentao
+    - family-names: Lin
+      given-names: Rongyi
+    - family-names: Zhong
+      given-names: Shuhan
+    - family-names: Fang
+      given-names: Quan
+  journal: "arXiv preprint arXiv:2609.38847"
+  year: 2026
+  url: "https://arxiv.org/abs/2609.38847"
